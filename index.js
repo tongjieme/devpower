@@ -59,7 +59,7 @@ var build = {
     pug: function () {
         return gulp.src(path.resolve(CWD, '**/*.pug'))
             .pipe(pug({
-                // Your options in here. 
+                pretty: true
             }))
             .on('error', function (e) {
                 gutil.log(e);
