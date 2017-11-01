@@ -33,6 +33,7 @@ var build = {
             .pipe(gulp.dest(path.resolve(CWD, './')));
     },
     es6: function () {
+        console.log('begin: \t es6 built');
         return gulp.src(path.resolve(CWD, '**/*.es6'))
             .pipe(plumber())
             .pipe(babel({
@@ -46,6 +47,10 @@ var build = {
             .pipe(program.babelpolyfill ? gap.prependFile(path.resolve(ROOT, 'lib/polyfill.min.js')) : gutil.noop())
             .on('error', function (e) {
                 gutil.log(e);
+            })
+            .on('end', function () {
+                console.log('done: \t es6 built');
+                
             })
             .pipe(rename(function (path) {
                 path.extname = ".js"
