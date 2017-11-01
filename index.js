@@ -57,12 +57,16 @@ var build = {
             .pipe(gulp.dest(path.resolve(CWD, './')));
     },
     pug: function () {
+        console.log('begin: \t pug built');
         return gulp.src(path.resolve(CWD, '**/*.pug'))
             .pipe(pug({
                 pretty: true
             }))
             .on('error', function (e) {
                 gutil.log(e);
+            })
+            .on('end', function () {
+                console.log('done: \t pug built');
             })
             .pipe(rename(function (path) {
                 path.extname = ".html"
