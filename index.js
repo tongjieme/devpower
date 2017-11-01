@@ -16,7 +16,7 @@ var rename = require("gulp-rename");
 var gutil = require('gulp-util');
 var plumber = require('gulp-plumber');
 var gap = require('gulp-append-prepend');
-
+var pug = require('gulp-pug');
 
 var CWD = process.cwd();
 var ROOT = __dirname;
@@ -50,10 +50,22 @@ var build = {
             })
             .on('end', function () {
                 console.log('done: \t es6 built');
-                
             })
             .pipe(rename(function (path) {
                 path.extname = ".js"
+            }))
+            .pipe(gulp.dest(path.resolve(CWD, './')));
+    },
+    pug: function () {
+        return gulp.src(path.resolve(CWD, '**/*.pug'))
+            .pipe(pug({
+                // Your options in here. 
+            }))
+            .on('error', function (e) {
+                gutil.log(e);
+            })
+            .pipe(rename(function (path) {
+                path.extname = ".html"
             }))
             .pipe(gulp.dest(path.resolve(CWD, './')));
     }
@@ -68,6 +80,9 @@ gulp.task('less:watch', function () {
 gulp.task('es6:watch', function () {
     gulp.watch(path.resolve(CWD, '**/*.es6'), build.es6);
 });
+gulp.task('pug:watch', function () {
+    gulp.watch(path.resolve(CWD, '**/*.pug'), build.pug);
+});
 
 
 program
@@ -75,7 +90,7 @@ program
  .parse(process.argv);
 
 
-gulp.start(["sass:watch", 'less:watch', 'es6:watch'], function () {
+gulp.start(["sass:watch", 'less:watch', 'es6:watch', 'pug:watch'], function () {
     console.log('laziness is ready...');
 });
 
