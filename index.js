@@ -6,6 +6,8 @@ snippet -u kannonboy -p correcthorsebatterystaple my_awesome_file
 */
 
 var path = require('path');
+
+var program = require('commander');
 var gulp = require('gulp');
 var sass = require('gulp-sass');
 var less = require('gulp-less');
@@ -41,7 +43,7 @@ var build = {
                     }
                 }]]
             }))
-            .pipe(gap.prependFile(path.resolve(ROOT, 'lib/polyfill.min.js')))
+            .pipe(program.babelpolyfill ? gap.prependFile(path.resolve(ROOT, 'lib/polyfill.min.js')) : gutil.noop())
             .on('error', function (e) {
                 gutil.log(e);
             })
@@ -62,6 +64,13 @@ gulp.task('es6:watch', function () {
     gulp.watch(path.resolve(CWD, '**/*.es6'), build.es6);
 });
 
+
+program
+ .option('-p, --babelpolyfill <true>', 'use babel-polyfill. Default: false')
+ .parse(process.argv);
+
+
 gulp.start(["sass:watch", 'less:watch', 'es6:watch'], function () {
     console.log('laziness is ready...');
 });
+
