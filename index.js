@@ -76,16 +76,16 @@ var build = {
 };
 
 gulp.task('sass:watch', function () {
-    gulp.watch(path.resolve(CWD, '**/*.scss'), build.sass);
+    gulp.watch('**/*.scss', {cwd: CWD}, build.sass);
 });
 gulp.task('less:watch', function () {
-    gulp.watch(path.resolve(CWD, '**/*.less'), build.less);
+    gulp.watch('**/*.less', { cwd: CWD }, build.less);
 });
 gulp.task('es6:watch', function () {
-    gulp.watch(path.resolve(CWD, '**/*.es6'), build.es6);
+    gulp.watch('**/*.es6', { cwd: CWD }, build.es6);
 });
 gulp.task('pug:watch', function () {
-    gulp.watch(path.resolve(CWD, '**/*.pug'), build.pug);
+    gulp.watch('**/*.pug', { cwd: CWD },  build.pug);
 });
 
 
