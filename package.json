@@ -10,6 +10,7 @@
     "babel-preset-es2016": "^6.24.1",
     "babel-preset-es2017": "^6.24.1",
     "gulp": "^3.9.1",
+    "gulp-append-prepend": "^1.0.4",
     "gulp-babel": "^7.0.0",
     "gulp-less": "^3.3.2",
     "gulp-plumber": "^1.1.0",

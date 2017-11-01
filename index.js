@@ -13,9 +13,11 @@ var babel = require('gulp-babel');
 var rename = require("gulp-rename");
 var gutil = require('gulp-util');
 var plumber = require('gulp-plumber');
+var gap = require('gulp-append-prepend');
+
 
 var CWD = process.cwd();
-
+var ROOT = __dirname;
 
 var build = {
     sass: function () {
@@ -39,6 +41,7 @@ var build = {
                     }
                 }]]
             }))
+            .pipe(gap.prependFile(path.resolve(ROOT, 'lib/polyfill.min.js')))
             .on('error', function (e) {
                 gutil.log(e);
             })
