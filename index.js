@@ -32,7 +32,12 @@ var build = {
         return gulp.src(path.resolve(CWD, '**/*.es6'))
             .pipe(plumber())
             .pipe(babel({
-                presets: ["babel-preset-es2015", "babel-preset-es2016", "babel-preset-es2017"].map(require.resolve)
+                // presets: ["babel-preset-es2015", "babel-preset-es2016", "babel-preset-es2017"].map(require.resolve)
+                presets: [[require.resolve('babel-preset-env'), {
+                    "targets": {
+                        "browsers": ["last 2 versions", "safari >= 7"]
+                    }
+                }]]
             }))
             .on('error', function (e) {
                 gutil.log(e);
