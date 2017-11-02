@@ -90,11 +90,18 @@ gulp.task('pug:watch', function () {
 
 
 program
- .option('-p, --babelpolyfill <true>', 'use babel-polyfill. Default: false')
+ .option('-p, --babelpolyfill <bool>', 'use babel-polyfill. Default: false')
+ .option('-b, --build <bool>', 'build only')
  .parse(process.argv);
 
-
-gulp.start(["sass:watch", 'less:watch', 'es6:watch', 'pug:watch'], function () {
-    console.log('laziness is ready...');
-});
+if(program.build) {
+    build.sass();
+    build.less();
+    build.es6();
+    build.pug();
+} else {
+    gulp.start(["sass:watch", 'less:watch', 'es6:watch', 'pug:watch'], function () {
+        console.log('laziness is ready...');
+    });
+}
 
