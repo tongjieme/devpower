@@ -23,13 +23,21 @@ var ROOT = __dirname;
 
 var build = {
     sass: function () {
+        console.log('begin: \t sass built');
         return gulp.src(path.resolve(CWD, '**/*.scss'))
             .pipe(sass().on('error', sass.logError))
+            .on('end', function () {
+                console.log('done: \t sass built');
+            })
             .pipe(gulp.dest(path.resolve(CWD, './')));
     },
     less: function () {
+        console.log('begin: \t less built');
         return gulp.src(path.resolve(CWD, '**/*.less'))
             .pipe(less().on('error', sass.logError))
+            .on('end', function () {
+                console.log('done: \t less built');
+            })
             .pipe(gulp.dest(path.resolve(CWD, './')));
     },
     es6: function () {
