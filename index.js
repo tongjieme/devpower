@@ -50,7 +50,7 @@ var build = {
                     "targets": {
                         "browsers": ["last 2 versions", "safari >= 7"]
                     }
-                }]]
+                }], require.resolve("babel-preset-stage-0"), require.resolve("babel-preset-stage-1"), require.resolve("babel-preset-stage-2"), require.resolve("babel-preset-stage-3")]
             }))
             .pipe(program.babelpolyfill ? gap.prependFile(path.resolve(ROOT, 'lib/polyfill.min.js')) : gutil.noop())
             .on('error', function (e) {
