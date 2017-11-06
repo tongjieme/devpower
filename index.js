@@ -1,11 +1,5 @@
 #!/usr/bin/env node
 
-/*
-
-snippet -u kannonboy -p correcthorsebatterystaple my_awesome_file
-
-*/
-
 var path       = require('path')
 
 var program    = require('commander')
