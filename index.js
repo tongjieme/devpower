@@ -21,6 +21,7 @@ var pug        = require('gulp-pug')
 var sourcemaps = require('gulp-sourcemaps')
 var bro        = require("gulp-bro")
 var markdown   = require('gulp-markdown')
+var uglify     = require('gulp-uglify')
 
 
 var CWD        = process.cwd()
@@ -74,6 +75,7 @@ var build = {
             .pipe(rename(function (path) {
                 path.extname = ".js"
             }))
+            .pipe(program.minify ? uglify() : gutil.noop())
             .pipe(gulp.dest(path.resolve(CWD, './')))
             .pipe(program.browserify ? bro() : gutil.noop())
             .pipe(program.browserify ? gulp.dest(path.resolve(CWD, './')) : gutil.noop())
@@ -144,10 +146,11 @@ program
     .option('-b, --build', 'build only')
     .option('-w, --browserify', 'browserify modules')
     .option('-s, --sourcemap', 'write sourcemap')
+    .option('-m, --minify', 'minify')
     .parse(process.argv);
 
 
-console.log(program.browserify);
+// console.log(program.browserify);
 
 
 
