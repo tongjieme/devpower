@@ -9,5 +9,5 @@ laziness
 - add support markdown to html      = done
 - add stylus support
 - add CoffeeScript support
-- add minify js support
+- add minify js support done
 - add minify css support

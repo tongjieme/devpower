@@ -22,6 +22,8 @@ var sourcemaps = require('gulp-sourcemaps')
 var bro        = require("gulp-bro")
 var markdown   = require('gulp-markdown')
 var uglify     = require('gulp-uglify')
+var autoprefixer = require('gulp-autoprefixer')
+var cleanCSS = require('gulp-clean-css')
 
 
 var CWD        = process.cwd()
@@ -33,6 +35,11 @@ var build = {
         return gulp.src(path.resolve(CWD, '**/*.scss'))
             .pipe(program.sourcemap ? sourcemaps.init() : gutil.noop())
             .pipe(sass().on('error', sass.logError))
+            .pipe(autoprefixer({
+                browsers: ['last 2 versions'],
+                cascade: false
+            }))
+            .pipe(program.minify ? cleanCSS({ compatibility: 'ie8' }) : gutil.noop())
             .pipe(program.sourcemap ? sourcemaps.write('./maps') : gutil.noop())
             .on('end', function () {
                 console.log('done: \t sass built');
@@ -44,6 +51,11 @@ var build = {
         return gulp.src(path.resolve(CWD, '**/*.less'))
             .pipe(program.sourcemap ? sourcemaps.init() : gutil.noop())
             .pipe(less().on('error', sass.logError))
+            .pipe(autoprefixer({
+                browsers: ['last 2 versions'],
+                cascade: false
+            }))
+            .pipe(program.minify ? cleanCSS({ compatibility: 'ie8' }) : gutil.noop())
             .pipe(program.sourcemap ? sourcemaps.write('./maps') : gutil.noop())
             .on('end', function () {
                 console.log('done: \t less built');
