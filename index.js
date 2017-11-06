@@ -32,7 +32,7 @@ var ROOT       = __dirname
 var build = {
     sass: function () {
         console.log('begin: \t sass built');
-        return gulp.src(path.resolve(CWD, '**/*.scss'))
+        return gulp.src([path.resolve(CWD, '**/*.scss'), '!**/node_modules/**/*'])
             .pipe(program.sourcemap ? sourcemaps.init() : gutil.noop())
             .pipe(sass().on('error', sass.logError))
             .pipe(autoprefixer({
@@ -48,7 +48,7 @@ var build = {
     },
     less: function () {
         console.log('begin: \t less built');
-        return gulp.src(path.resolve(CWD, '**/*.less'))
+        return gulp.src([path.resolve(CWD, '**/*.less'), '!**/node_modules/**/*'])
             .pipe(program.sourcemap ? sourcemaps.init() : gutil.noop())
             .pipe(less().on('error', sass.logError))
             .pipe(autoprefixer({
@@ -64,7 +64,7 @@ var build = {
     },
     es6: function () {
         console.log('begin: \t es6 built');
-        return gulp.src(path.resolve(CWD, '**/*.es6'))
+        return gulp.src([path.resolve(CWD, '**/*.es6'), '!**/node_modules/**/*'])
             .pipe(plumber())
             .pipe(babel({
                 // presets: ["babel-preset-es2015", "babel-preset-es2016", "babel-preset-es2017"].map(require.resolve)
@@ -94,7 +94,7 @@ var build = {
     },
     pug: function () {
         console.log('begin: \t pug built');
-        return gulp.src(path.resolve(CWD, '**/*.pug'))
+        return gulp.src([path.resolve(CWD, '**/*.pug'), '!**/node_modules/**/*'])
             .pipe(pug({
                 pretty: true
             }))
@@ -111,7 +111,7 @@ var build = {
     },
     markdown: function(){
         console.log('begin: \t markdown built');
-        return gulp.src(path.resolve(CWD, '**/*.md'))
+        return gulp.src([path.resolve(CWD, '**/*.md'), '!**/node_modules/**/*'])
             .pipe(markdown())
             .on('error', function (e) {
                 gutil.log(e);
@@ -127,27 +127,27 @@ var build = {
 };
 
 gulp.task('sass:watch', function () {
-    gulp.watch('**/*.scss', {
+    gulp.watch(['**/*.scss', '!**/node_modules/**/*'], {
         cwd: CWD
     }, build.sass);
 });
 gulp.task('less:watch', function () {
-    gulp.watch('**/*.less', {
+    gulp.watch(['**/*.less', '!**/node_modules/**/*'], {
         cwd: CWD
     }, build.less);
 });
 gulp.task('es6:watch', function () {
-    gulp.watch('**/*.es6', {
+    gulp.watch(['**/*.es6', '!**/node_modules/**/*'], {
         cwd: CWD
     }, build.es6);
 });
 gulp.task('pug:watch', function () {
-    gulp.watch('**/*.pug', {
+    gulp.watch(['**/*.pug', '!**/node_modules/**/*'], {
         cwd: CWD
     }, build.pug);
 });
 gulp.task('markdown:watch', function () {
-    gulp.watch('**/*.md', {
+    gulp.watch(['**/*.md', '!**/node_modules/**/*'], {
         cwd: CWD
     }, build.markdown);
 });
