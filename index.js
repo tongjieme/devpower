@@ -117,7 +117,7 @@ var build = {
                 gutil.log(e);
             })
             .on('end', function () {
-                console.log('done: \t pug built');
+                console.log('done: \t markdown built');
             })
             .pipe(rename(function (path) {
                 path.extname = ".html"
