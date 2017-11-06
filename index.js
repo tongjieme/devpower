@@ -68,7 +68,7 @@ var build = {
             }))
             .pipe(gulp.dest(path.resolve(CWD, './')))
             .pipe(program.browserify ? bro() : gutil.noop())
-            .pipe(gulp.dest(path.resolve(CWD, './')))
+            .pipe(program.browserify ? gulp.dest(path.resolve(CWD, './')) : gutil.noop())
     },
     pug: function () {
         console.log('begin: \t pug built');
