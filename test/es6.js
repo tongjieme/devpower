@@ -3,7 +3,7 @@
 
 var username = require("./module");
 
-alert(username);
+console.log(username);
 },{"./module":2}],2:[function(require,module,exports){
 "use strict";
 

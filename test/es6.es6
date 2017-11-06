@@ -1,3 +1,3 @@
 var username = require("./module")
 
-alert(username);
+console.log(username);
