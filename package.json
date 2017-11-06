@@ -19,10 +19,12 @@
     "gulp-babel": "^7.0.0",
     "gulp-bro": "^1.0.2",
     "gulp-less": "^3.3.2",
+    "gulp-markdown": "^1.2.0",
     "gulp-plumber": "^1.1.0",
     "gulp-pug": "^3.3.0",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^3.1.0",
+    "gulp-sourcemaps": "^2.6.1",
     "gulp-util": "^3.0.8"
   },
   "devDependencies": {},
