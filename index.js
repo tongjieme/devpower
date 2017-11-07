@@ -154,7 +154,6 @@ var build = {
         var srcArr = [path.resolve(CWD, '**/*.png'), path.resolve(CWD, '**/*.jpg'), '!**/node_modules/**/*'].concat(excludeArr);
         var dist   = path.resolve(CWD, './');
         return gulp.src(srcArr)
-            .pipe(markdown())
             .on('error', function (e) {
                 gutil.log(e);
             })
