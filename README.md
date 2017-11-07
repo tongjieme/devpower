@@ -11,3 +11,5 @@ laziness
 - :bulb: add support CoffeeScript
 - :white_check_mark: add support minify js
 - :white_check_mark: add support minify css
+
+- add exclude glob pattern support
