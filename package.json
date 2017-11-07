@@ -20,6 +20,7 @@
     "gulp-babel": "^7.0.0",
     "gulp-bro": "^1.0.2",
     "gulp-clean-css": "^3.9.0",
+    "gulp-imagemin": "^3.4.0",
     "gulp-less": "^3.3.2",
     "gulp-markdown": "^1.2.0",
     "gulp-plumber": "^1.1.0",

@@ -18,7 +18,7 @@ var markdown     = require('gulp-markdown')
 var uglify       = require('gulp-uglify')
 var autoprefixer = require('gulp-autoprefixer')
 var cleanCSS     = require('gulp-clean-css')
-
+var imagemin     = require('gulp-imagemin')
 
 var CWD        = process.cwd()
 var ROOT       = __dirname
@@ -148,6 +148,21 @@ var build = {
                 path.extname = ".html"
             }))
             .pipe(gulp.dest(dist));
+    },
+    imageMin: function () {
+        console.log('begin: \t markdown built');
+        var srcArr = [path.resolve(CWD, '**/*.png'), path.resolve(CWD, '**/*.jpg'), '!**/node_modules/**/*'].concat(excludeArr);
+        var dist   = path.resolve(CWD, './');
+        return gulp.src(srcArr)
+            .pipe(markdown())
+            .on('error', function (e) {
+                gutil.log(e);
+            })
+            .on('end', function () {
+                console.log('done: \t markdown built');
+            })
+            .pipe(imagemin())
+            .pipe(gulp.dest(dist));
     }
 };
 
@@ -188,6 +203,7 @@ if (program.build) {
     build.es6();
     build.pug();
     build.markdown();
+    build.imageMin();
 } else {
     gulp.start(["sass:watch", 'less:watch', 'es6:watch', 'pug:watch', 'markdown:watch'], function () {
         console.log('laziness is ready...');
