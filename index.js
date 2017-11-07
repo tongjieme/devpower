@@ -1,32 +1,55 @@
 #!/usr/bin/env node
 
-var path       = require('path')
+var path         = require('path')
 
-var program    = require('commander')
-var gulp       = require('gulp')
-var sass       = require('gulp-sass')
-var less       = require('gulp-less')
-var babel      = require('gulp-babel')
-var rename     = require("gulp-rename")
-var gutil      = require('gulp-util')
-var plumber    = require('gulp-plumber')
-var gap        = require('gulp-append-prepend')
-var pug        = require('gulp-pug')
-var sourcemaps = require('gulp-sourcemaps')
-var bro        = require("gulp-bro")
-var markdown   = require('gulp-markdown')
-var uglify     = require('gulp-uglify')
+var program      = require('commander')
+var gulp         = require('gulp')
+var sass         = require('gulp-sass')
+var less         = require('gulp-less')
+var babel        = require('gulp-babel')
+var rename       = require("gulp-rename")
+var gutil        = require('gulp-util')
+var plumber      = require('gulp-plumber')
+var gap          = require('gulp-append-prepend')
+var pug          = require('gulp-pug')
+var sourcemaps   = require('gulp-sourcemaps')
+var bro          = require("gulp-bro")
+var markdown     = require('gulp-markdown')
+var uglify       = require('gulp-uglify')
 var autoprefixer = require('gulp-autoprefixer')
-var cleanCSS = require('gulp-clean-css')
+var cleanCSS     = require('gulp-clean-css')
 
 
 var CWD        = process.cwd()
 var ROOT       = __dirname
 
+
+
+
+program
+    .option('-p, --babelpolyfill', 'use babel-polyfill. Default: false')
+    .option('-b, --build', 'build only')
+    .option('-w, --browserify', 'browserify modules')
+    .option('-s, --sourcemap', 'write sourcemap')
+    .option('-m, --minify', 'minify')
+    .option('-x, --exclude <string>', 'exclude glob pattern. E.g. "**/*.min.js:**/*.min.css"')
+    .parse(process.argv);
+
+// console.log(program.exclude);
+
+
+
+
+var excludeArr = program.exclude ? program.exclude.split(':').map(v => "!" + v) : [];
+
+
 var build = {
     sass: function () {
         console.log('begin: \t sass built');
-        return gulp.src([path.resolve(CWD, '**/*.scss'), '!**/node_modules/**/*'])
+
+        var srcArr = [path.resolve(CWD, '**/*.scss'), '!**/node_modules/**/*'].concat(excludeArr);
+        var dist   = path.resolve(CWD, './');
+        return gulp.src(srcArr)
             .pipe(program.sourcemap ? sourcemaps.init() : gutil.noop())
             .pipe(sass().on('error', sass.logError))
             .pipe(autoprefixer({
@@ -38,11 +61,13 @@ var build = {
             .on('end', function () {
                 console.log('done: \t sass built');
             })
-            .pipe(gulp.dest(path.resolve(CWD, './')));
+            .pipe(gulp.dest(dist));
     },
     less: function () {
         console.log('begin: \t less built');
-        return gulp.src([path.resolve(CWD, '**/*.less'), '!**/node_modules/**/*'])
+        var srcArr = [path.resolve(CWD, '**/*.less'), '!**/node_modules/**/*'].concat(excludeArr);
+        var dist   = path.resolve(CWD, './');
+        return gulp.src(srcArr)
             .pipe(program.sourcemap ? sourcemaps.init() : gutil.noop())
             .pipe(less().on('error', sass.logError))
             .pipe(autoprefixer({
@@ -54,11 +79,13 @@ var build = {
             .on('end', function () {
                 console.log('done: \t less built');
             })
-            .pipe(gulp.dest(path.resolve(CWD, './')));
+            .pipe(gulp.dest(dist));
     },
     es6: function () {
         console.log('begin: \t es6 built');
-        return gulp.src([path.resolve(CWD, '**/*.es6'), '!**/node_modules/**/*'])
+        var srcArr = [path.resolve(CWD, '**/*.es6'), '!**/node_modules/**/*'].concat(excludeArr);
+        var dist   = path.resolve(CWD, './');
+        return gulp.src(srcArr)
             .pipe(plumber())
             .pipe(babel({
                 // presets: ["babel-preset-es2015", "babel-preset-es2016", "babel-preset-es2017"].map(require.resolve)
@@ -82,13 +109,15 @@ var build = {
                 path.extname = ".js"
             }))
             .pipe(program.minify ? uglify() : gutil.noop())
-            .pipe(gulp.dest(path.resolve(CWD, './')))
+            .pipe(gulp.dest(dist))
             .pipe(program.browserify ? bro() : gutil.noop())
-            .pipe(program.browserify ? gulp.dest(path.resolve(CWD, './')) : gutil.noop())
+            .pipe(program.browserify ? gulp.dest(dist) : gutil.noop())
     },
     pug: function () {
         console.log('begin: \t pug built');
-        return gulp.src([path.resolve(CWD, '**/*.pug'), '!**/node_modules/**/*'])
+        var srcArr = [path.resolve(CWD, '**/*.pug'), '!**/node_modules/**/*'].concat(excludeArr);
+        var dist   = path.resolve(CWD, './');
+        return gulp.src(srcArr)
             .pipe(pug({
                 pretty: true
             }))
@@ -101,11 +130,13 @@ var build = {
             .pipe(rename(function (path) {
                 path.extname = ".html"
             }))
-            .pipe(gulp.dest(path.resolve(CWD, './')));
+            .pipe(gulp.dest(dist));
     },
     markdown: function(){
         console.log('begin: \t markdown built');
-        return gulp.src([path.resolve(CWD, '**/*.md'), '!**/node_modules/**/*'])
+        var srcArr = [path.resolve(CWD, '**/*.md'), '!**/node_modules/**/*'].concat(excludeArr);
+        var dist   = path.resolve(CWD, './');
+        return gulp.src(srcArr)
             .pipe(markdown())
             .on('error', function (e) {
                 gutil.log(e);
@@ -116,7 +147,7 @@ var build = {
             .pipe(rename(function (path) {
                 path.extname = ".html"
             }))
-            .pipe(gulp.dest(path.resolve(CWD, './')));
+            .pipe(gulp.dest(dist));
     }
 };
 
@@ -147,16 +178,7 @@ gulp.task('markdown:watch', function () {
 });
 
 
-program
-    .option('-p, --babelpolyfill', 'use babel-polyfill. Default: false')
-    .option('-b, --build', 'build only')
-    .option('-w, --browserify', 'browserify modules')
-    .option('-s, --sourcemap', 'write sourcemap')
-    .option('-m, --minify', 'minify')
-    .parse(process.argv);
 
-
-// console.log(program.browserify);
 
 
 
