@@ -160,7 +160,11 @@ var build = {
             .on('end', function () {
                 console.log('done: \t markdown built');
             })
-            .pipe(imagemin())
+            .pipe(imagemin([
+                imagemin.gifsicle({ interlaced: true }),
+                imagemin.jpegtran({ progressive: true }),
+                imagemin.optipng({ optimizationLevel: 5 }),
+            ]))
             .pipe(gulp.dest(dist));
     }
 };
