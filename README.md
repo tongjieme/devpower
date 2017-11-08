@@ -13,3 +13,4 @@ laziness
 - :white_check_mark: add support minify css
 
 - :white_check_mark: add exclude glob pattern support
+- :bulb:  pngquant compress png

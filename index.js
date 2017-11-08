@@ -19,6 +19,7 @@ var uglify       = require('gulp-uglify')
 var autoprefixer = require('gulp-autoprefixer')
 var cleanCSS     = require('gulp-clean-css')
 var imagemin     = require('gulp-imagemin')
+var imageminPngquant = require('imagemin-pngquant');
 
 var CWD        = process.cwd()
 var ROOT       = __dirname
@@ -163,7 +164,10 @@ var build = {
             .pipe(imagemin([
                 imagemin.gifsicle({ interlaced: true }),
                 imagemin.jpegtran({ progressive: true }),
-                imagemin.optipng({ optimizationLevel: 5 }),
+                imageminPngquant({
+                    // quality: "80"
+                    verbose: true
+                })
             ]))
             .pipe(gulp.dest(dist));
     }
