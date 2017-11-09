@@ -2,24 +2,26 @@
 
 var path         = require('path')
 
-var program      = require('commander')
-var gulp         = require('gulp')
-var sass         = require('gulp-sass')
-var less         = require('gulp-less')
-var babel        = require('gulp-babel')
-var rename       = require("gulp-rename")
-var gutil        = require('gulp-util')
-var plumber      = require('gulp-plumber')
-var gap          = require('gulp-append-prepend')
-var pug          = require('gulp-pug')
-var sourcemaps   = require('gulp-sourcemaps')
-var bro          = require("gulp-bro")
-var markdown     = require('gulp-markdown')
-var uglify       = require('gulp-uglify')
-var autoprefixer = require('gulp-autoprefixer')
-var cleanCSS     = require('gulp-clean-css')
-var imagemin     = require('gulp-imagemin')
-var imageminPngquant = require('imagemin-pngquant');
+var program          = require('commander')
+var gulp             = require('gulp')
+var sass             = require('gulp-sass')
+var less             = require('gulp-less')
+var babel            = require('gulp-babel')
+var rename           = require("gulp-rename")
+var gutil            = require('gulp-util')
+var plumber          = require('gulp-plumber')
+var gap              = require('gulp-append-prepend')
+var pug              = require('gulp-pug')
+var sourcemaps       = require('gulp-sourcemaps')
+var bro              = require("gulp-bro")
+var markdown         = require('gulp-markdown')
+var uglify           = require('gulp-uglify')
+var autoprefixer     = require('gulp-autoprefixer')
+var cleanCSS         = require('gulp-clean-css')
+var imagemin         = require('gulp-imagemin')
+var imageminPngquant = require('imagemin-pngquant')
+var webp             = require('gulp-webp')
+var async            = require("async")
 
 var CWD        = process.cwd()
 var ROOT       = __dirname
@@ -34,6 +36,7 @@ program
     .option('-s, --sourcemap', 'write sourcemap')
     .option('-m, --minify', 'minify')
     .option('-x, --exclude <string>', 'exclude glob pattern. E.g. "**/*.min.js:**/*.min.css"')
+    .option('--webp', 'generate webp')
     .parse(process.argv);
 
 // console.log(program.exclude);
@@ -151,15 +154,15 @@ var build = {
             .pipe(gulp.dest(dist));
     },
     imageMin: function () {
-        console.log('begin: \t markdown built');
+        console.log('begin: \t imageMin built');
         var srcArr = [path.resolve(CWD, '**/*.png'), path.resolve(CWD, '**/*.jpg'), '!**/node_modules/**/*'].concat(excludeArr);
-        var dist   = path.resolve(CWD, './');
+        var dist = path.resolve(CWD, './');
         return gulp.src(srcArr)
             .on('error', function (e) {
                 gutil.log(e);
             })
             .on('end', function () {
-                console.log('done: \t markdown built');
+                console.log('done: \t imageMin built');
             })
             .pipe(imagemin([
                 imagemin.gifsicle({ interlaced: true }),
@@ -170,6 +173,63 @@ var build = {
                 })
             ]))
             .pipe(gulp.dest(dist));
+    },
+    image2Webp: () => {
+        console.log('Begin ImageMin');
+        async.parallel([
+            function (callback) {
+                build.jpg2Webp().then(callback);
+            },
+            function (callback) {
+                build.png2Webp().then(callback);
+            }
+        ],
+            // optional callback 
+            function (err, results) {
+                // the results array will equal ['one','two'] even though 
+                // the second function had a shorter timeout. 
+                console.log('Done ImageMin');
+            });
+    },
+    png2Webp: () => {
+        return new Promise((resolve, reject) => {
+            var srcArr = [path.resolve(CWD, '**/*.png'), '!**/node_modules/**/*'].concat(excludeArr);
+            var dist = path.resolve(CWD, './');
+            gulp.src(srcArr)
+                .on('error', function (e) {
+                    gutil.log(e);
+                    reject(e)
+                })
+                .on('end', function () {
+                    console.log('done: \t webp built');
+                    resolve();
+                })
+                .pipe(webp())
+                .pipe(rename(function (path) {
+                    path.basename += ".png"
+                }))
+                .pipe(gulp.dest(dist));
+        });
+    },
+    jpg2Webp: () => {
+        return new Promise((resolve, reject) => {
+            var srcArr = [path.resolve(CWD, '**/*.jpg'), '!**/node_modules/**/*'].concat(excludeArr);
+            var dist = path.resolve(CWD, './');
+            gulp.src(srcArr)
+                .on('error', function (e) {
+                    gutil.log(e);
+                    reject(e)
+                })
+                .on('end', function () {
+                    console.log('done: \t webp built');
+                    resolve();
+                })
+                .pipe(webp())
+                .pipe(rename(function (path) {
+                    path.basename += ".jpg"
+                }))
+                .pipe(gulp.dest(dist));
+        });
     }
 };
 
@@ -201,10 +261,9 @@ gulp.task('markdown:watch', function () {
 
 
 
-
-
-
-if (program.build) {
+if (program.webp) {
+    build.image2Webp();
+} else if (program.build) {
     build.sass();
     build.less();
     build.es6();
