@@ -14,3 +14,7 @@ laziness
 
 - :white_check_mark: add exclude glob pattern support
 - :bulb:  pngquant compress png
+
+# development
+install from local:
+`npm i -g`

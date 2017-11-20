@@ -26,20 +26,10 @@ var async = require("async")
 var CWD = process.cwd()
 var ROOT = __dirname
 
+var browserSync = require("browser-sync");
+var bs = browserSync.create();
 
 
-
-program
-    .option('-p, --babelpolyfill', 'use babel-polyfill. Default: false')
-    .option('-b, --build', 'build only')
-    .option('-w, --browserify', 'browserify modules')
-    .option('-s, --sourcemap', 'write sourcemap')
-    .option('-m, --minify', 'minify')
-    .option('-x, --exclude <string>', 'exclude glob pattern. E.g. "**/*.min.js:**/*.min.css"')
-    .option('--webp', 'generate webp')
-    .parse(process.argv);
-
-// console.log(program.exclude);
 
 
 
@@ -238,18 +228,37 @@ var build = {
                 }))
                 .pipe(gulp.dest(dist));
         });
+    },
+    startServer: () => {
+        bs.init({
+            server: CWD
+        });
     }
 };
 
 gulp.task('sass:watch', function () {
     gulp.watch(['**/*.scss', '!**/node_modules/**/*'], {
         cwd: CWD
-    }, build.sass);
+    }, () => {
+        build.sass();
+        setTimeout(() => {
+            if (program.server) {
+                bs.reload("*.css");
+            }
+        }, 800);
+    });
 });
 gulp.task('less:watch', function () {
     gulp.watch(['**/*.less', '!**/node_modules/**/*'], {
         cwd: CWD
-    }, build.less);
+    }, () => {
+        build.less()
+        setTimeout(() => {
+            if(program.server) {
+                bs.reload("*.css");
+            }
+        }, 800);
+    });
 });
 gulp.task('es6:watch', function () {
     gulp.watch(['**/*.es6', '!**/node_modules/**/*'], {
@@ -269,6 +278,21 @@ gulp.task('markdown:watch', function () {
 
 
 
+program
+    .option('-p, --babelpolyfill', 'use babel-polyfill. Default: false')
+    .option('-b, --build', 'build only')
+    .option('-w, --browserify', 'browserify modules')
+    .option('-s, --sourcemap', 'write sourcemap')
+    .option('-m, --minify', 'minify')
+    .option('-x, --exclude <string>', 'exclude glob pattern. E.g. "**/*.min.js:**/*.min.css"')
+    .option('--webp', 'generate webp')
+    .option('--server', 'start static server')
+    .parse(process.argv);
+
+// console.log(program.exclude);
+
+
+
 if (program.webp) {
     build.image2Webp();
 } else if (program.build) {
@@ -282,4 +306,8 @@ if (program.webp) {
     gulp.start(["sass:watch", 'less:watch', 'es6:watch', 'pug:watch', 'markdown:watch'], function () {
         console.log('laziness is ready...');
     });
+}
+
+if (program.server) {
+    build.startServer()
 }
