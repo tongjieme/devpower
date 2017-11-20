@@ -1,30 +1,30 @@
 #!/usr/bin/env node
 
-var path         = require('path')
+var path = require('path')
 
-var program          = require('commander')
-var gulp             = require('gulp')
-var sass             = require('gulp-sass')
-var less             = require('gulp-less')
-var babel            = require('gulp-babel')
-var rename           = require("gulp-rename")
-var gutil            = require('gulp-util')
-var plumber          = require('gulp-plumber')
-var gap              = require('gulp-append-prepend')
-var pug              = require('gulp-pug')
-var sourcemaps       = require('gulp-sourcemaps')
-var bro              = require("gulp-bro")
-var markdown         = require('gulp-markdown')
-var uglify           = require('gulp-uglify')
-var autoprefixer     = require('gulp-autoprefixer')
-var cleanCSS         = require('gulp-clean-css')
-var imagemin         = require('gulp-imagemin')
+var program = require('commander')
+var gulp = require('gulp')
+var sass = require('gulp-sass')
+var less = require('gulp-less')
+var babel = require('gulp-babel')
+var rename = require("gulp-rename")
+var gutil = require('gulp-util')
+var plumber = require('gulp-plumber')
+var gap = require('gulp-append-prepend')
+var pug = require('gulp-pug')
+var sourcemaps = require('gulp-sourcemaps')
+var bro = require("gulp-bro")
+var markdown = require('gulp-markdown')
+var uglify = require('gulp-uglify')
+var autoprefixer = require('gulp-autoprefixer')
+var cleanCSS = require('gulp-clean-css')
+var imagemin = require('gulp-imagemin')
 var imageminPngquant = require('imagemin-pngquant')
-var webp             = require('gulp-webp')
-var async            = require("async")
+var webp = require('gulp-webp')
+var async = require("async")
 
-var CWD        = process.cwd()
-var ROOT       = __dirname
+var CWD = process.cwd()
+var ROOT = __dirname
 
 
 
@@ -52,7 +52,7 @@ var build = {
         console.log('begin: \t sass built');
 
         var srcArr = [path.resolve(CWD, '**/*.scss'), '!**/node_modules/**/*'].concat(excludeArr);
-        var dist   = path.resolve(CWD, './');
+        var dist = path.resolve(CWD, './');
         return gulp.src(srcArr)
             .pipe(program.sourcemap ? sourcemaps.init() : gutil.noop())
             .pipe(sass().on('error', sass.logError))
@@ -60,7 +60,9 @@ var build = {
                 browsers: ['last 2 versions'],
                 cascade: false
             }))
-            .pipe(program.minify ? cleanCSS({ compatibility: 'ie8' }) : gutil.noop())
+            .pipe(program.minify ? cleanCSS({
+                compatibility: 'ie8'
+            }) : gutil.noop())
             .pipe(program.sourcemap ? sourcemaps.write('./maps') : gutil.noop())
             .on('end', function () {
                 console.log('done: \t sass built');
@@ -70,7 +72,7 @@ var build = {
     less: function () {
         console.log('begin: \t less built');
         var srcArr = [path.resolve(CWD, '**/*.less'), '!**/node_modules/**/*'].concat(excludeArr);
-        var dist   = path.resolve(CWD, './');
+        var dist = path.resolve(CWD, './');
         return gulp.src(srcArr)
             .pipe(program.sourcemap ? sourcemaps.init() : gutil.noop())
             .pipe(less().on('error', sass.logError))
@@ -78,7 +80,9 @@ var build = {
                 browsers: ['last 2 versions'],
                 cascade: false
             }))
-            .pipe(program.minify ? cleanCSS({ compatibility: 'ie8' }) : gutil.noop())
+            .pipe(program.minify ? cleanCSS({
+                compatibility: 'ie8'
+            }) : gutil.noop())
             .pipe(program.sourcemap ? sourcemaps.write('./maps') : gutil.noop())
             .on('end', function () {
                 console.log('done: \t less built');
@@ -88,7 +92,7 @@ var build = {
     es6: function () {
         console.log('begin: \t es6 built');
         var srcArr = [path.resolve(CWD, '**/*.es6'), '!**/node_modules/**/*'].concat(excludeArr);
-        var dist   = path.resolve(CWD, './');
+        var dist = path.resolve(CWD, './');
         return gulp.src(srcArr)
             .pipe(plumber())
             .pipe(babel({
@@ -120,7 +124,7 @@ var build = {
     pug: function () {
         console.log('begin: \t pug built');
         var srcArr = [path.resolve(CWD, '**/*.pug'), '!**/node_modules/**/*'].concat(excludeArr);
-        var dist   = path.resolve(CWD, './');
+        var dist = path.resolve(CWD, './');
         return gulp.src(srcArr)
             .pipe(pug({
                 pretty: true
@@ -136,10 +140,10 @@ var build = {
             }))
             .pipe(gulp.dest(dist));
     },
-    markdown: function(){
+    markdown: function () {
         console.log('begin: \t markdown built');
         var srcArr = [path.resolve(CWD, '**/*.md'), '!**/node_modules/**/*'].concat(excludeArr);
-        var dist   = path.resolve(CWD, './');
+        var dist = path.resolve(CWD, './');
         return gulp.src(srcArr)
             .pipe(markdown())
             .on('error', function (e) {
@@ -165,8 +169,12 @@ var build = {
                 console.log('done: \t imageMin built');
             })
             .pipe(imagemin([
-                imagemin.gifsicle({ interlaced: true }),
-                imagemin.jpegtran({ progressive: true }),
+                imagemin.gifsicle({
+                    interlaced: true
+                }),
+                imagemin.jpegtran({
+                    progressive: true
+                }),
                 imageminPngquant({
                     // quality: "80"
                     verbose: true
@@ -177,13 +185,13 @@ var build = {
     image2Webp: () => {
         console.log('Begin ImageMin');
         async.parallel([
-            function (callback) {
-                build.jpg2Webp().then(callback);
-            },
-            function (callback) {
-                build.png2Webp().then(callback);
-            }
-        ],
+                function (callback) {
+                    build.jpg2Webp().then(callback);
+                },
+                function (callback) {
+                    build.png2Webp().then(callback);
+                }
+            ],
             // optional callback 
             function (err, results) {
                 // the results array will equal ['one','two'] even though 
