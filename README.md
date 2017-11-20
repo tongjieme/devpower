@@ -15,6 +15,12 @@ laziness
 - :white_check_mark: add exclude glob pattern support
 - :bulb:  pngquant compress png
 
+- :white_check_mark: add add http server
+
 # development
 install from local:
 `npm i -g`
+
+# note: 
+Until npm5 issue https://github.com/npm/npm/issues/18233 fixed
+run `npm i --no-optional` at the moment
