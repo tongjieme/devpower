@@ -29,7 +29,7 @@ var ROOT = __dirname
 var browserSync = require("browser-sync");
 var bs = browserSync.create();
 
-
+var noop = () => {}
 
 
 
@@ -38,7 +38,7 @@ var excludeArr = program.exclude ? program.exclude.split(':').map(v => "!" + v) 
 
 
 var build = {
-    sass: function () {
+    sass: function (func = noop) {
         console.log('begin: \t sass built');
 
         var srcArr = [path.resolve(CWD, '**/*.scss'), '!**/node_modules/**/*'].concat(excludeArr);
@@ -56,10 +56,11 @@ var build = {
             .pipe(program.sourcemap ? sourcemaps.write('./maps') : gutil.noop())
             .on('end', function () {
                 console.log('done: \t sass built');
+                func()
             })
             .pipe(gulp.dest(dist));
     },
-    less: function () {
+    less: function (func = noop) {
         console.log('begin: \t less built');
         var srcArr = [path.resolve(CWD, '**/*.less'), '!**/node_modules/**/*'].concat(excludeArr);
         var dist = path.resolve(CWD, './');
@@ -76,10 +77,11 @@ var build = {
             .pipe(program.sourcemap ? sourcemaps.write('./maps') : gutil.noop())
             .on('end', function () {
                 console.log('done: \t less built');
+                func();
             })
             .pipe(gulp.dest(dist));
     },
-    es6: function () {
+    es6: function (func = noop) {
         console.log('begin: \t es6 built');
         var srcArr = [path.resolve(CWD, '**/*.es6'), '!**/node_modules/**/*'].concat(excludeArr);
         var dist = path.resolve(CWD, './');
@@ -102,6 +104,7 @@ var build = {
             })
             .on('end', function () {
                 console.log('done: \t es6 built');
+                func();
             })
             .pipe(rename(function (path) {
                 path.extname = ".js"
@@ -111,7 +114,7 @@ var build = {
             .pipe(program.browserify ? bro() : gutil.noop())
             .pipe(program.browserify ? gulp.dest(dist) : gutil.noop())
     },
-    pug: function () {
+    pug: function (func = noop) {
         console.log('begin: \t pug built');
         var srcArr = [path.resolve(CWD, '**/*.pug'), '!**/node_modules/**/*'].concat(excludeArr);
         var dist = path.resolve(CWD, './');
@@ -124,6 +127,7 @@ var build = {
             })
             .on('end', function () {
                 console.log('done: \t pug built');
+                func();
             })
             .pipe(rename(function (path) {
                 path.extname = ".html"
@@ -240,35 +244,48 @@ gulp.task('sass:watch', function () {
     gulp.watch(['**/*.scss', '!**/node_modules/**/*'], {
         cwd: CWD
     }, () => {
-        build.sass();
-        setTimeout(() => {
+        build.sass(() => {
             if (program.server) {
                 bs.reload("*.css");
             }
-        }, 800);
+        });
     });
 });
 gulp.task('less:watch', function () {
     gulp.watch(['**/*.less', '!**/node_modules/**/*'], {
         cwd: CWD
     }, () => {
-        build.less()
-        setTimeout(() => {
-            if(program.server) {
+        build.less(() => {
+            if (program.server) {
                 bs.reload("*.css");
             }
-        }, 800);
+        })
     });
 });
 gulp.task('es6:watch', function () {
     gulp.watch(['**/*.es6', '!**/node_modules/**/*'], {
         cwd: CWD
-    }, build.es6);
+    }, () => {
+        build.es6(() => {
+            if (program.server) {
+                bs.reload("*.js");
+            }
+        })
+    });
 });
 gulp.task('pug:watch', function () {
     gulp.watch(['**/*.pug', '!**/node_modules/**/*'], {
         cwd: CWD
-    }, build.pug);
+    }, () => {
+        build.pug(() => {
+            if (program.server) {
+                setTimeout(() => {
+                    bs.reload();
+                }, 100);
+                
+            }
+        })
+    });
 });
 gulp.task('markdown:watch', function () {
     gulp.watch(['**/*.md', '!**/node_modules/**/*'], {
