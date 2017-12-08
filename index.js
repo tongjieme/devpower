@@ -25,14 +25,18 @@ var async = require("async")
 
 var CWD = process.cwd()
 var ROOT = __dirname
+var CWD_name = CWD.split(path.sep)[CWD.split(path.sep).length - 1]
 
 var browserSync = require("browser-sync");
 var bs = browserSync.create();
 
 var ts = require('gulp-typescript');
 
+var zip = require('gulp-zip');
+
 
 var noop = () => {}
+
 
 
 
@@ -238,7 +242,8 @@ var build = {
     },
     startServer: () => {
         bs.init({
-            server: CWD
+            server: CWD,
+            open: "external"
         });
     },
     typescript: () => {
@@ -254,6 +259,24 @@ var build = {
                 }, ts.reporter.longReporter(true)))
                 .on('end', function () {
                     console.log('done: \t typescript built');
+                    resolve();
+                })
+                .pipe(gulp.dest(dist));
+        });
+    },
+    zip: () => {
+        console.log('begin: \t zip built');
+        return new Promise((resolve, reject) => {
+            var srcArr = [path.resolve(CWD, '**/*'), '!**/node_modules/**/*', "!**/*.d.ts", "!**/*.scss", "!**/*.es6", "!**/*.less", "!**/*.pug"].concat(excludeArr);
+            var dist = path.resolve(CWD, './../');
+            gulp.src(srcArr)
+                .pipe(zip(CWD_name + '.zip'))
+                .on('error', function (e) {
+                    gutil.log(e);
+                    reject(e)
+                })
+                .on('end', function () {
+                    console.log('done: \t zip built');
                     resolve();
                 })
                 .pipe(gulp.dest(dist));
@@ -326,21 +349,28 @@ gulp.task('typescript:watch', function () {
 program
     .option('-p, --babelpolyfill', 'use babel-polyfill. Default: false')
     .option('-b, --build', 'build only')
-    .option('-w, --browserify', 'browserify modules')
+    .option('-br, --browserify', 'browserify modules')
+    .option('-w, --watch', 'watch mode')
     .option('-s, --sourcemap', 'write sourcemap')
     .option('-m, --minify', 'minify')
     .option('-x, --exclude <string>', 'exclude glob pattern. E.g. "**/*.min.js:**/*.min.css"')
     .option('--webp', 'generate webp')
+    .option('--zip', 'zip project for release')
     .option('--server', 'start static server')
     .parse(process.argv);
 
 // console.log(program.exclude);
 
 
+if(program.zip) {
+    build.zip();
+}
 
 if (program.webp) {
     build.image2Webp();
-} else if (program.build) {
+}
+
+if (program.build) {
     build.sass();
     build.less();
     build.es6();
@@ -348,7 +378,9 @@ if (program.webp) {
     build.markdown();
     build.imageMin();
     build.typescript();
-} else {
+} 
+
+if(program.watch){
     gulp.start(["sass:watch", 'less:watch', 'es6:watch', 'pug:watch', 'markdown:watch', "typescript:watch"], function () {
         console.log('laziness is ready...');
     });
