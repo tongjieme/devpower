@@ -349,7 +349,7 @@ gulp.task('typescript:watch', function () {
 program
     .option('-p, --babelpolyfill', 'use babel-polyfill. Default: false')
     .option('-b, --build', 'build only')
-    .option('-br, --browserify', 'browserify modules')
+    .option('--br, --browserify', 'browserify modules')
     .option('-w, --watch', 'watch mode')
     .option('-s, --sourcemap', 'write sourcemap')
     .option('-m, --minify', 'minify')
