@@ -244,12 +244,13 @@ var build = {
     typescript: () => {
         console.log('begin: \t typescript built');
         return new Promise((resolve, reject) => {
-            var srcArr = [path.resolve(CWD, '**/*.ts'), '!**/node_modules/**/*'].concat(excludeArr);
+            var srcArr = [path.resolve(CWD, '**/*.ts'), '!**/node_modules/**/*', "!**/*.d.ts"].concat(excludeArr);
             var dist = path.resolve(CWD, './');
             gulp.src(srcArr)
                 .pipe(ts({
                     noImplicitAny: true,
-                    target: "es5"
+                    target: "es5",
+                    declaration: true
                 }, ts.reporter.longReporter(true)))
                 .on('end', function () {
                     console.log('done: \t typescript built');
