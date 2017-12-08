@@ -116,8 +116,8 @@ var build = {
             .pipe(rename(function (path) {
                 path.extname = ".js"
             }))
-            .pipe(program.minify ? uglify() : gutil.noop())
             .pipe(program.browserify ? bro() : gutil.noop())
+            .pipe(program.minify ? uglify() : gutil.noop())
             .pipe(gulp.dest(dist))
     },
     pug: function (func = noop) {
