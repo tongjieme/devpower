@@ -16,6 +16,7 @@
     "babel-preset-stage-3": "^6.24.1",
     "browser-sync": "^2.18.13",
     "commander": "^2.11.0",
+    "global": "^4.3.2",
     "gulp": "^3.9.1",
     "gulp-append-prepend": "^1.0.4",
     "gulp-autoprefixer": "^4.0.0",
