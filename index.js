@@ -117,9 +117,8 @@ var build = {
                 path.extname = ".js"
             }))
             .pipe(program.minify ? uglify() : gutil.noop())
-            .pipe(gulp.dest(dist))
             .pipe(program.browserify ? bro() : gutil.noop())
-            .pipe(program.browserify ? gulp.dest(dist) : gutil.noop())
+            .pipe(gulp.dest(dist))
     },
     pug: function (func = noop) {
         console.log('begin: \t pug built');
