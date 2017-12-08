@@ -17,6 +17,8 @@ laziness
 
 - :white_check_mark: add add http server
 
+- :white_check_mark:  add support typescript .ts
+
 # development
 install from local:
 `npm i -g`

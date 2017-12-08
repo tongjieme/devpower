@@ -29,6 +29,9 @@ var ROOT = __dirname
 var browserSync = require("browser-sync");
 var bs = browserSync.create();
 
+var ts = require('gulp-typescript');
+
+
 var noop = () => {}
 
 
@@ -237,6 +240,23 @@ var build = {
         bs.init({
             server: CWD
         });
+    },
+    typescript: () => {
+        console.log('begin: \t typescript built');
+        return new Promise((resolve, reject) => {
+            var srcArr = [path.resolve(CWD, '**/*.ts'), '!**/node_modules/**/*'].concat(excludeArr);
+            var dist = path.resolve(CWD, './');
+            gulp.src(srcArr)
+                .pipe(ts({
+                    noImplicitAny: true,
+                    target: "es5"
+                }, ts.reporter.longReporter(true)))
+                .on('end', function () {
+                    console.log('done: \t typescript built');
+                    resolve();
+                })
+                .pipe(gulp.dest(dist));
+        });
     }
 };
 
@@ -294,6 +314,13 @@ gulp.task('markdown:watch', function () {
 });
 
 
+gulp.task('typescript:watch', function () {
+    gulp.watch(['**/*.ts', '!**/node_modules/**/*'], {
+        cwd: CWD
+    }, build.typescript);
+});
+
+
 
 program
     .option('-p, --babelpolyfill', 'use babel-polyfill. Default: false')
@@ -319,8 +346,9 @@ if (program.webp) {
     build.pug();
     build.markdown();
     build.imageMin();
+    build.typescript();
 } else {
-    gulp.start(["sass:watch", 'less:watch', 'es6:watch', 'pug:watch', 'markdown:watch'], function () {
+    gulp.start(["sass:watch", 'less:watch', 'es6:watch', 'pug:watch', 'markdown:watch', "typescript:watch"], function () {
         console.log('laziness is ready...');
     });
 }
