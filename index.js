@@ -362,8 +362,6 @@ program
     .option('--server', 'start static server')
     .parse(process.argv);
 
-// console.log(program.exclude);
-
 
 if(program.zip) {
     build.zip();
