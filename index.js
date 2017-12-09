@@ -13,7 +13,7 @@ var plumber = require('gulp-plumber')
 var gap = require('gulp-append-prepend')
 var pug = require('gulp-pug')
 var sourcemaps = require('gulp-sourcemaps')
-var bro = require("gulp-bro")
+var bro = require("gulp-bro") // browserify
 var markdown = require('gulp-markdown')
 var uglify = require('gulp-uglify')
 var autoprefixer = require('gulp-autoprefixer')
@@ -25,7 +25,7 @@ var async = require("async")
 
 var CWD = process.cwd()
 var ROOT = __dirname
-var CWD_name = CWD.split(path.sep)[CWD.split(path.sep).length - 1]
+var CWD_name = CWD.split(path.sep)[CWD.split(path.sep).length - 1] // directory name of CWD
 
 var browserSync = require("browser-sync");
 var bs = browserSync.create();
@@ -109,10 +109,6 @@ var build = {
             .on('error', function (e) {
                 gutil.log(e);
             })
-            .on('end', function () {
-                console.log('done: \t es6 built');
-                func();
-            })
             .pipe(rename(function (path) {
                 path.extname = ".js"
             }))
@@ -120,6 +116,10 @@ var build = {
             .pipe(gulp.dest(dist))
             .pipe(program.browserify ? bro() : gutil.noop())
             .pipe(program.minify ? uglify() : gutil.noop())
+            .on('end', function () {
+                console.log('done: \t es6 built');
+                func();
+            })
             .pipe(gulp.dest(dist))
     },
     pug: function (func = noop) {
@@ -348,6 +348,8 @@ gulp.task('typescript:watch', function () {
 
 
 program
+    .version('0.1.0')
+    .usage('[options] <file ...>')
     .option('-p, --babelpolyfill', 'use babel-polyfill. Default: false')
     .option('-b, --build', 'build only')
     .option('--br, --browserify', 'browserify modules')
