@@ -1,4 +1,4 @@
-laziness
+devpower
 
 # road map
 - :bulb: 支持 vue 单组件编译
@@ -25,4 +25,5 @@ install from local:
 
 # note: 
 Until npm5 issue https://github.com/npm/npm/issues/18233 fixed
+
 run `npm i --no-optional` at the moment
