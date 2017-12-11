@@ -1,7 +1,7 @@
 {
-  "name": "laziness",
+  "name": "devpower",
   "version": "1.0.0",
-  "description": "laziness",
+  "description": "devpower",
   "main": "index.js",
   "dependencies": {
     "async": "^2.6.0",
@@ -45,7 +45,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "laziness": "./index.js"
+    "devpower": "./index.js"
   },
   "keywords": [],
   "author": "",
