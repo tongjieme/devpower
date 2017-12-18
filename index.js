@@ -354,7 +354,7 @@ program
     .option('-b, --build', 'build only')
     .option('--br, --browserify', 'browserify modules')
     // .option('-w, --watch <string>', 'watch files, e.g. "scss,sass,es6,ts,pug,less,md". default: "scss,sass,es6,pug,less"')
-    .option('-w, --watch <string>', 'watch files')
+    .option('-w, --watch', 'watch files')
     .option('-s, --sourcemap', 'write sourcemap')
     .option('-m, --minify', 'minify')
     .option('-x, --exclude <string>', 'exclude glob pattern. E.g. "**/*.min.js,**/*.min.css"')
