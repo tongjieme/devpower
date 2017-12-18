@@ -48,7 +48,7 @@ var build = {
     sass: function (func = noop) {
         console.log('begin: \t sass built');
 
-        var srcArr = [path.resolve(CWD, '**/*.scss'), '!**/node_modules/**/*'].concat(excludeArr);
+        var srcArr = [path.resolve(CWD, '**/*.scss'), path.resolve(CWD, '**/*.sass'), '!**/node_modules/**/*'].concat(excludeArr);
         var dist = path.resolve(CWD, './');
         return gulp.src(srcArr)
             .pipe(program.sourcemap ? sourcemaps.init() : gutil.noop())
