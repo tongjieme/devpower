@@ -41,7 +41,7 @@ var noop = () => {}
 
 
 
-var excludeArr = program.exclude ? program.exclude.split(':').map(v => "!" + v) : [];
+var excludeArr = program.exclude ? program.exclude.split(',').map(v => "!" + v) : [];
 
 
 var build = {
@@ -286,7 +286,7 @@ var build = {
 };
 
 gulp.task('sass:watch', function () {
-    gulp.watch(['**/*.scss', '!**/node_modules/**/*'], {
+    gulp.watch(['**/*.scss', '**/*.sass', '!**/node_modules/**/*'], {
         cwd: CWD
     }, () => {
         build.sass(() => {
@@ -332,14 +332,14 @@ gulp.task('pug:watch', function () {
         })
     });
 });
-gulp.task('markdown:watch', function () {
+gulp.task('md:watch', function () {
     gulp.watch(['**/*.md', '!**/node_modules/**/*'], {
         cwd: CWD
     }, build.markdown);
 });
 
 
-gulp.task('typescript:watch', function () {
+gulp.task('ts:watch', function () {
     gulp.watch(['**/*.ts', '!**/node_modules/**/*'], {
         cwd: CWD
     }, build.typescript);
@@ -353,10 +353,11 @@ program
     .option('-p, --babelpolyfill', 'use babel-polyfill. Default: false')
     .option('-b, --build', 'build only')
     .option('--br, --browserify', 'browserify modules')
-    .option('-w, --watch', 'watch mode')
+    // .option('-w, --watch <string>', 'watch files, e.g. "scss,sass,es6,ts,pug,less,md". default: "scss,sass,es6,pug,less"')
+    .option('-w, --watch <string>', 'watch files')
     .option('-s, --sourcemap', 'write sourcemap')
     .option('-m, --minify', 'minify')
-    .option('-x, --exclude <string>', 'exclude glob pattern. E.g. "**/*.min.js:**/*.min.css"')
+    .option('-x, --exclude <string>', 'exclude glob pattern. E.g. "**/*.min.js,**/*.min.css"')
     .option('--webp', 'generate webp')
     .option('--zip', 'zip project for release')
     .option('--server', 'start static server')
@@ -382,8 +383,8 @@ if (program.build) {
 } 
 
 if(program.watch){
-    gulp.start(["sass:watch", 'less:watch', 'es6:watch', 'pug:watch', 'markdown:watch', "typescript:watch"], function () {
-        console.log('laziness is ready...');
+    gulp.start(["sass:watch", 'less:watch', 'es6:watch', 'pug:watch', 'md:watch', "ts:watch"], function () {
+        console.log('devpower is ready...');
     });
 }
 
