@@ -35,18 +35,21 @@ var ts = require('gulp-typescript');
 var zip = require('gulp-zip');
 
 
-var noop = () => {}
-
-
-
+var noop = require("./lib/utils").noop;
+var timenow = require("./lib/utils").timenow;
 
 
 var excludeArr = program.exclude ? program.exclude.split(',').map(v => "!" + v) : [];
 
 
+var log = (msg, status = "building") => {
+    console.log(`${timenow()} ${msg} \t ${status}`);
+}
+
+
 var build = {
     sass: function (func = noop) {
-        console.log('begin: \t sass built');
+        log("sass", "building")
 
         var srcArr = [path.resolve(CWD, '**/*.scss'), path.resolve(CWD, '**/*.sass'), '!**/node_modules/**/*'].concat(excludeArr);
         var dist = path.resolve(CWD, './');
@@ -62,13 +65,13 @@ var build = {
             }) : gutil.noop())
             .pipe(program.sourcemap ? sourcemaps.write('./maps') : gutil.noop())
             .on('end', function () {
-                console.log('done: \t sass built');
+                log("sass" , "done")
                 func()
             })
             .pipe(gulp.dest(dist));
     },
     less: function (func = noop) {
-        console.log('begin: \t less built');
+        log("less", "building")
         var srcArr = [path.resolve(CWD, '**/*.less'), '!**/node_modules/**/*'].concat(excludeArr);
         var dist = path.resolve(CWD, './');
         return gulp.src(srcArr)
@@ -83,13 +86,13 @@ var build = {
             }) : gutil.noop())
             .pipe(program.sourcemap ? sourcemaps.write('./maps') : gutil.noop())
             .on('end', function () {
-                console.log('done: \t less built');
+                log("less", "done")
                 func();
             })
             .pipe(gulp.dest(dist));
     },
     es6: function (func = noop) {
-        console.log('begin: \t es6 built');
+        log("es6", "building")
         var srcArr = [path.resolve(CWD, '**/*.es6'), '!**/node_modules/**/*'].concat(excludeArr);
         var dist = path.resolve(CWD, './');
         return gulp.src(srcArr)
@@ -117,13 +120,13 @@ var build = {
             .pipe(program.browserify ? bro() : gutil.noop())
             .pipe(program.minify ? uglify() : gutil.noop())
             .on('end', function () {
-                console.log('done: \t es6 built');
+                log("es6", "done")
                 func();
             })
             .pipe(gulp.dest(dist))
     },
     pug: function (func = noop) {
-        console.log('begin: \t pug built');
+        log("pug", "building")
         var srcArr = [path.resolve(CWD, '**/*.pug'), '!**/node_modules/**/*'].concat(excludeArr);
         var dist = path.resolve(CWD, './');
         return gulp.src(srcArr)
@@ -134,7 +137,7 @@ var build = {
                 gutil.log(e);
             })
             .on('end', function () {
-                console.log('done: \t pug built');
+                log("pug", "done")
                 func();
             })
             .pipe(rename(function (path) {
@@ -143,7 +146,7 @@ var build = {
             .pipe(gulp.dest(dist));
     },
     markdown: function () {
-        console.log('begin: \t markdown built');
+        log("markdown", "building")
         var srcArr = [path.resolve(CWD, '**/*.md'), '!**/node_modules/**/*'].concat(excludeArr);
         var dist = path.resolve(CWD, './');
         return gulp.src(srcArr)
@@ -152,7 +155,7 @@ var build = {
                 gutil.log(e);
             })
             .on('end', function () {
-                console.log('done: \t markdown built');
+                log("markdown", "done")
             })
             .pipe(rename(function (path) {
                 path.extname = ".html"
@@ -160,7 +163,7 @@ var build = {
             .pipe(gulp.dest(dist));
     },
     imageMin: function () {
-        console.log('begin: \t imageMin built');
+        log("imageMin", "building")
         var srcArr = [path.resolve(CWD, '**/*.png'), path.resolve(CWD, '**/*.jpg'), '!**/node_modules/**/*'].concat(excludeArr);
         var dist = path.resolve(CWD, './');
         return gulp.src(srcArr)
@@ -168,7 +171,7 @@ var build = {
                 gutil.log(e);
             })
             .on('end', function () {
-                console.log('done: \t imageMin built');
+                log("imageMin", "done")
             })
             .pipe(imagemin([
                 imagemin.gifsicle({
@@ -185,7 +188,7 @@ var build = {
             .pipe(gulp.dest(dist));
     },
     image2Webp: () => {
-        console.log('Begin ImageMin');
+        log("image2Webp", "building")
         async.parallel([
                 function (callback) {
                     build.jpg2Webp().then(callback);
@@ -198,7 +201,7 @@ var build = {
             function (err, results) {
                 // the results array will equal ['one','two'] even though 
                 // the second function had a shorter timeout. 
-                console.log('Done ImageMin');
+                log("image2Webp", "done")
             });
     },
     png2Webp: () => {
@@ -211,7 +214,6 @@ var build = {
                     reject(e)
                 })
                 .on('end', function () {
-                    console.log('done: \t webp built');
                     resolve();
                 })
                 .pipe(webp())
@@ -231,7 +233,6 @@ var build = {
                     reject(e)
                 })
                 .on('end', function () {
-                    console.log('done: \t webp built');
                     resolve();
                 })
                 .pipe(webp())
@@ -248,7 +249,7 @@ var build = {
         });
     },
     typescript: () => {
-        console.log('begin: \t typescript built');
+        log("typescript", "building")
         return new Promise((resolve, reject) => {
             var srcArr = [path.resolve(CWD, '**/*.ts'), '!**/node_modules/**/*', "!**/*.d.ts"].concat(excludeArr);
             var dist = path.resolve(CWD, './');
@@ -259,14 +260,14 @@ var build = {
                     declaration: true
                 }, ts.reporter.longReporter(true)))
                 .on('end', function () {
-                    console.log('done: \t typescript built');
+                    log("typescript", "done")
                     resolve();
                 })
                 .pipe(gulp.dest(dist));
         });
     },
     zip: () => {
-        console.log('begin: \t zip built');
+        log("zip", "building")
         return new Promise((resolve, reject) => {
             var srcArr = [path.resolve(CWD, '**/*'), '!**/node_modules/**/*', "!**/*.d.ts", "!**/*.scss", "!**/*.es6", "!**/*.less", "!**/*.pug"].concat(excludeArr);
             var dist = path.resolve(CWD, './../');
@@ -277,7 +278,7 @@ var build = {
                     reject(e)
                 })
                 .on('end', function () {
-                    console.log('done: \t zip built');
+                    log("zip", "done")
                     resolve();
                 })
                 .pipe(gulp.dest(dist));
@@ -354,7 +355,7 @@ program
     .option('-b, --build', 'build only')
     .option('--br, --browserify', 'browserify modules')
     // .option('-w, --watch <string>', 'watch files, e.g. "scss,sass,es6,ts,pug,less,md". default: "scss,sass,es6,pug,less"')
-    .option('-w, --watch', 'watch files')
+    .option('-w, --watch [extensions]', 'watch files, e.g. "scss,sass,es6,ts,pug,less,md". default: "scss,sass,es6,pug,less"')
     .option('-s, --sourcemap', 'write sourcemap')
     .option('-m, --minify', 'minify')
     .option('-x, --exclude <string>', 'exclude glob pattern. E.g. "**/*.min.js,**/*.min.css"')
@@ -381,10 +382,15 @@ if (program.build) {
     build.imageMin();
     build.typescript();
 } 
-
 if(program.watch){
-    gulp.start(["sass:watch", 'less:watch', 'es6:watch', 'pug:watch', 'md:watch', "ts:watch"], function () {
-        console.log('devpower is ready...');
+    program.watch = program.watch === true ? 'scss,sass,es6,pug,less' : program.watch;
+
+    var file_exts = program.watch;
+    program.watch = program.watch.split(",").map(v => `${v}:watch`)
+
+    gulp.start(program.watch, function () {
+        console.log(`devpower is ready...
+watch: ${file_exts}`);
     });
 }
 
