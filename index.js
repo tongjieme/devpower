@@ -145,7 +145,7 @@ var build = {
             }))
             .pipe(gulp.dest(dist));
     },
-    markdown: function () {
+    md: function () {
         log("markdown", "building")
         var srcArr = [path.resolve(CWD, '**/*.md'), '!**/node_modules/**/*'].concat(excludeArr);
         var dist = path.resolve(CWD, './');
@@ -248,7 +248,7 @@ var build = {
             open: "external"
         });
     },
-    typescript: () => {
+    ts: () => {
         log("typescript", "building")
         return new Promise((resolve, reject) => {
             var srcArr = [path.resolve(CWD, '**/*.ts'), '!**/node_modules/**/*', "!**/*.d.ts"].concat(excludeArr);
@@ -286,7 +286,8 @@ var build = {
     }
 };
 
-gulp.task('sass:watch', function () {
+
+var sassWatch = function () {
     gulp.watch(['**/*.scss', '**/*.sass', '!**/node_modules/**/*'], {
         cwd: CWD
     }, () => {
@@ -296,7 +297,10 @@ gulp.task('sass:watch', function () {
             }
         });
     });
-});
+}
+gulp.task('sass:watch', sassWatch);
+gulp.task('scss:watch', sassWatch);
+
 gulp.task('less:watch', function () {
     gulp.watch(['**/*.less', '!**/node_modules/**/*'], {
         cwd: CWD
@@ -354,7 +358,6 @@ program
     .option('-p, --babelpolyfill', 'use babel-polyfill. Default: false')
     .option('-b, --build', 'build only')
     .option('--br, --browserify', 'browserify modules')
-    // .option('-w, --watch <string>', 'watch files, e.g. "scss,sass,es6,ts,pug,less,md". default: "scss,sass,es6,pug,less"')
     .option('-w, --watch [extensions]', 'watch files, e.g. "scss,sass,es6,ts,pug,less,md". default: "scss,sass,es6,pug,less"')
     .option('-s, --sourcemap', 'write sourcemap')
     .option('-m, --minify', 'minify')
@@ -378,17 +381,19 @@ if (program.build) {
     build.less();
     build.es6();
     build.pug();
-    build.markdown();
+    build.md();
     build.imageMin();
-    build.typescript();
+    build.ts();
 } 
 if(program.watch){
     program.watch = program.watch === true ? 'scss,sass,es6,pug,less' : program.watch;
 
     var file_exts = program.watch;
-    program.watch = program.watch.split(",").map(v => `${v}:watch`)
+    var watch = program.watch.split(",").map(v => `${v}:watch`)
 
-    gulp.start(program.watch, function () {
+    console.log(watch);
+    
+    gulp.start(watch, function () {
         console.log(`devpower is ready...
 watch: ${file_exts}`);
     });
