@@ -41,7 +41,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "install-dev": "npm i -g",
+    "install-dev": "npm i -g --no-optional",
+    "dev": "",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
