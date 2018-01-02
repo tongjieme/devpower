@@ -337,7 +337,7 @@ var build = {
                     ts({
                             noImplicitAny: true,
                             target: "es5",
-                            declaration: true
+                            declaration: false
                         },
                         ts.reporter.longReporter(true)
                     )
@@ -346,7 +346,9 @@ var build = {
                     log("typescript", "done");
                     resolve();
                 })
-                .pipe(gulp.dest(dist));
+                .pipe(gulp.dest(dist))
+                .pipe(program.browserify ? bro() : gutil.noop())
+                .pipe(gulp.dest(dist))
         });
     },
     zip: () => {
