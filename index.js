@@ -337,7 +337,8 @@ var build = {
                     ts({
                             noImplicitAny: true,
                             target: "es5",
-                            declaration: false
+                            declaration: false,
+                            sourceMap: true
                         },
                         ts.reporter.longReporter(true)
                     )
