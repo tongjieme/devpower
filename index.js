@@ -461,7 +461,7 @@ gulp.task("ts:watch", function () {
 });
 
 program
-  .version("0.1.0")
+  .version("0.1.1")
   .usage("[options] <file ...>")
   .option("-p, --babelpolyfill", "use babel-polyfill. Default: false")
   .option("-b, --build", "build only")
