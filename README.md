@@ -19,11 +19,8 @@ devpower
 
 - :white_check_mark:  add support typescript .ts
 
-# development
-install from local:
-`npm i -g`
-
-# note: 
-Until npm5 issue https://github.com/npm/npm/issues/18233 fixed
-
-run `npm i -g --no-optional` at the moment
+# 安装
+```
+yarn
+npm i -g --no-optional
+```
