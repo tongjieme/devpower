@@ -24,3 +24,8 @@ devpower
 yarn
 npm i -g --no-optional
 ```
+
+# 使用
+```
+devpower --help
+```
