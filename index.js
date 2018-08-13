@@ -169,6 +169,7 @@ var build = {
         log("pug", "building");
         var srcArr = [
             path.resolve(CWD, "**/*.pug"),
+            path.resolve(CWD, "**/*.jade"),
             "!**/node_modules/**/*"
         ].concat(excludeArr);
         var dist = path.resolve(CWD, "./");
@@ -362,6 +363,7 @@ var build = {
                 "!**/*.scss",
                 "!**/*.es6",
                 "!**/*.less",
+                "!**/*.jade",
                 "!**/*.pug"
             ].concat(excludeArr);
             var dist = path.resolve(CWD, "./../");
@@ -427,7 +429,7 @@ gulp.task("es6:watch", function () {
 });
 gulp.task("pug:watch", function () {
     gulp.watch(
-        ["**/*.pug", "!**/node_modules/**/*"], {
+        ["**/*.pug","**/*.jade", "!**/node_modules/**/*"], {
             cwd: CWD
         },
         () => {
@@ -468,7 +470,7 @@ program
   .option("--br, --browserify", "browserify modules")
   .option(
     "-w, --watch [extensions]",
-    'watch files, e.g. "scss,sass,es6,ts,pug,less,md". default: "scss,sass,es6,pug,less"'
+    'watch files, e.g. "scss,sass,es6,ts,pug,less,md". default: "scss,sass,es6,.jade, pug,less"'
   )
   .option("-s, --sourcemap", "write sourcemap")
   .option("-m, --minify", "minify")
