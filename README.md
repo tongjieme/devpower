@@ -21,6 +21,8 @@ devpower
 
 # 安装
 ```
+git clone https://github.com/tongjieme/devpower
+cd devpower
 yarn
 npm i -g --no-optional
 ```
